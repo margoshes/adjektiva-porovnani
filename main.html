@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Інтерактивне зіставлення дієприкметникових і віддієслівних прикметникових форм в українській та чеській мовах.">
+  <title>Дієприкметники й віддієслівні прикметники — українська та чеська</title>
+  <style>
+    :root {
+      --ink: #42000d;
+      --ink-soft: #563238;
+      --blue: #0b434d;
+      --blue-2: #39727a;
+      --line: #d9a28d;
+      --panel: #fff9f5;
+      --paper: #ffbf9e;
+      --blue-pale: #e5eeee;
+      --green-pale: #e7f0e6;
+      --purple-pale: #f2e6e7;
+      --amber-pale: #fff0e5;
+      --shadow: 0 10px 28px rgba(66, 0, 13, .11), 0 3px 12px rgba(11, 67, 77, .07);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 0%, rgba(255, 248, 243, .78) 0, transparent 32rem),
+        radial-gradient(circle at 92% 38%, rgba(11, 67, 77, .10) 0, transparent 27rem),
+        var(--paper);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.52;
+    }
+    .page { width: min(1220px, calc(100% - 34px)); margin: 28px auto 40px; }
+    .hero {
+      position: relative;
+      padding: 30px 28px 24px;
+      border: 1px solid #d9a18b;
+      border-radius: 24px 24px 0 0;
+      background: linear-gradient(125deg, rgba(255, 249, 245, .98), rgba(255, 227, 212, .96));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .hero:before, .hero:after {
+      content: ""; position: absolute; width: 190px; height: 190px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(11, 67, 77, .14), rgba(11, 67, 77, 0)); pointer-events: none;
+    }
+    .hero:before { left: -60px; top: -90px; }
+    .hero:after { right: 8%; bottom: -135px; }
+    .hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; position: relative; z-index: 1; }
+    .title-wrap { display: flex; gap: 18px; align-items: center; }
+    .book-mark {
+      flex: 0 0 64px; width: 64px; height: 64px; display: grid; place-items: center;
+      border: 1px solid #d5a18d; border-radius: 17px; background: #fffaf6; color: var(--blue);
+      font-size: 34px; box-shadow: 0 5px 15px rgba(66, 0, 13, .10), 0 2px 7px rgba(11, 67, 77, .07);
+    }
+    h1 { margin: 0; font: 700 clamp(1.65rem, 3vw, 2.5rem)/1.13 Georgia, "Times New Roman", serif; letter-spacing: -.025em; }
+    .subtitle { margin: 9px 0 0; color: #4c6364; font: italic 1.08rem/1.4 Georgia, "Times New Roman", serif; }
+    .lang-switch {
+      position: relative; z-index: 2; display: inline-flex; flex: 0 0 auto; padding: 5px;
+      border: 1px solid #d6a28e; border-radius: 999px; background: #fff9f5;
+      box-shadow: 0 4px 13px rgba(66, 0, 13, .10), 0 2px 7px rgba(11, 67, 77, .06);
+    }
+    .lang-switch button {
+      min-width: 82px; border: 0; padding: 10px 15px; border-radius: 999px; background: transparent;
+      color: var(--ink); font: inherit; font-weight: 700; cursor: pointer; transition: .18s ease;
+    }
+    .lang-switch button[aria-pressed="true"] {
+      color: #fff9f5;
+      background: linear-gradient(135deg, #42000d, #642033);
+      box-shadow: 0 3px 9px rgba(66, 0, 13, .24);
+    }
+    .lang-switch button:focus-visible, .tab:focus-visible { outline: 3px solid #0b434d; outline-offset: 2px; }
+    .tabs-shell { padding: 0 16px; border-bottom: 1px solid var(--line); background: rgba(255, 249, 245, .68); }
+    .tabs { display: flex; align-items: end; gap: 7px; overflow-x: auto; padding-top: 14px; scrollbar-width: thin; }
+    .tab {
+      position: relative; flex: 1 0 auto; min-width: max-content; border: 1px solid #d7a18d; border-bottom: 0;
+      padding: 13px 19px 12px; border-radius: 15px 15px 0 0; background: linear-gradient(#fff9f5, #f5ded2);
+      color: var(--ink); font: inherit; font-weight: 650; cursor: pointer; white-space: nowrap;
+      box-shadow: 0 -2px 8px rgba(66, 0, 13, .035) inset; transition: .18s ease;
+    }
+    .tab:hover { background: #fff0e8; }
+    .tab[aria-selected="true"] {
+      z-index: 1; color: #fff9f5; border-color: var(--blue);
+      background: linear-gradient(135deg, #0b434d, #155b65);
+      box-shadow: 0 5px 12px rgba(11, 67, 77, .20), 0 2px 5px rgba(66, 0, 13, .10);
+    }
+    .tab .ico { margin-right: 8px; font-size: 1.05em; }
+    main { padding: 23px 0 0; }
+    .intro {
+      margin: 0 0 18px; padding: 17px 20px; border: 1px solid #e0b7a5; border-left: 5px solid #0b434d;
+      border-radius: 13px; background: rgba(255, 250, 246, .93); color: var(--ink-soft);
+      box-shadow: 0 4px 13px rgba(66, 0, 13, .045);
+    }
+    .intro strong { color: var(--ink); }
+    .section-title { margin: 23px 0 10px; font: 700 1.32rem/1.25 Georgia, "Times New Roman", serif; color: #0b434d; }
+    .section-lead { margin: -3px 0 13px; color: #4f6564; }
+    .table-wrap {
+      width: 100%; overflow-x: auto; border: 1px solid #d0a18e; border-radius: 15px;
+      background: #fffaf6; box-shadow: 0 5px 16px rgba(66, 0, 13, .065), 0 2px 7px rgba(11, 67, 77, .045);
+    }
+    table { width: 100%; min-width: 820px; border-collapse: collapse; }
+    th, td { padding: 13px 14px; text-align: left; vertical-align: top; border-right: 1px solid #ead4ca; border-bottom: 1px solid #ead4ca; }
+    th:last-child, td:last-child { border-right: 0; }
+    tr:last-child td { border-bottom: 0; }
+    thead th { color: #fff9f5; background: linear-gradient(180deg, #155a64, #0b434d); font-weight: 750; }
+    tbody tr:nth-child(even) { background: #fff2eb; }
+    tbody tr:hover { background: #f7e5dc; }
+    td:first-child { font-weight: 700; color: #42000d; }
+    .form { font: 700 1.13rem/1.35 Georgia, "Times New Roman", serif; color: #42000d; }
+    .sub { display: block; margin-top: 4px; color: #5c6a66; font-size: .9rem; font-weight: 450; }
+    .badge { display: inline-block; padding: 5px 10px; border-radius: 10px; font-size: .88rem; font-weight: 750; line-height: 1.3; }
+    .active { background: var(--green-pale); color: #28543b; }
+    .passive { background: var(--purple-pale); color: #682b3a; }
+    .neutral { background: var(--amber-pale); color: #75432d; }
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-top: 18px; }
+    .card {
+      min-width: 0; padding: 17px 18px; border: 1px solid #dfb9a9; border-radius: 15px;
+      background: #fff9f5; box-shadow: 0 5px 15px rgba(66, 0, 13, .055), 0 2px 6px rgba(11, 67, 77, .035);
+    }
+    .card h3 { display: flex; align-items: center; gap: 9px; margin: 0 0 9px; font-size: 1.08rem; color: #42000d; }
+    .card p { margin: 7px 0 0; color: #4e5d5a; }
+    .card.blue { background: linear-gradient(145deg, #f0f6f4, #e2eeee); border-color: #b7ceca; }
+    .card.green { background: linear-gradient(145deg, #f2f7ef, #e6efe3); border-color: #c5d8bf; }
+    .card.amber { background: linear-gradient(145deg, #fff8f1, #ffe9dd); border-color: #e7bba6; }
+    .card.purple { background: linear-gradient(145deg, #fff5f2, #f2e5e5); border-color: #ddbbbb; }
+    .list { margin: 8px 0 0; padding-left: 21px; color: #4e5d5a; }
+    .list li { margin: 6px 0; }
+    .note { margin-top: 14px; padding: 13px 16px; border-radius: 12px; background: #fff0e5; border: 1px solid #e5b9a4; color: #54242c; }
+    .example-line { margin: 9px 0; padding: 10px 12px; background: rgba(255, 250, 246, .86); border-radius: 10px; border: 1px solid #e7cfc4; }
+    .example-line strong { color: #0b434d; }
+    .pair-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; margin-top: 15px; }
+    .pair { padding: 15px 17px; border-radius: 14px; background: #fff9f5; border: 1px solid #dfb9a9; }
+    .pair h3 { margin: 0 0 8px; font-size: 1.04rem; color: #0b434d; }
+    .pair p { margin: 7px 0; color: #4e5d5a; }
+    .pill { display: inline-block; margin: 3px 4px 3px 0; padding: 3px 9px; border-radius: 999px; background: #e5eeee; color: #174b53; font-size: .85rem; }
+    .footer { margin-top: 23px; padding: 17px 19px; border: 1px solid #d9aa96; border-radius: 15px; background: rgba(255, 249, 245, .90); color: #505b57; font-size: .9rem; }
+    .footer a { color: #0b5965; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    .footer ul { margin: 8px 0 0; padding-left: 19px; }
+    .footer li { margin: 4px 0; }
+    .small { color: #5e6b67; font-size: .9rem; }
+    .hidden { display: none !important; }
+    @media (max-width: 820px) {
+      .hero-top { flex-direction: column; }
+      .lang-switch { align-self: flex-end; }
+      .cards { grid-template-columns: 1fr; }
+      .pair-grid { grid-template-columns: 1fr; }
+      .tabs-shell { padding: 0 9px; }
+      .tab { padding: 11px 14px 10px; }
+    }
+    @media (max-width: 520px) {
+      .page { width: min(100% - 18px, 1220px); margin-top: 9px; }
+      .hero { padding: 20px 15px 18px; border-radius: 18px 18px 0 0; }
+      .title-wrap { align-items: flex-start; gap: 11px; }
+      .book-mark { flex-basis: 45px; width: 45px; height: 45px; font-size: 24px; border-radius: 12px; }
+      .subtitle { font-size: .98rem; }
+      .lang-switch { align-self: flex-start; }
+      .intro { padding: 14px; }
+      th, td { padding: 10px 11px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-top">
+        <div class="title-wrap">
+          <div class="book-mark" aria-hidden="true">📖</div>
+          <div>
+            <h1 id="pageTitle">Дієприкметники й віддієслівні прикметники</h1>
+            <p class="subtitle" id="pageSubtitle">Порівняння форм, значень і способів творення в українській та чеській мовах</p>
+          </div>
+        </div>
+        <div class="lang-switch" role="group" aria-label="Мова інтерфейсу">
+          <button type="button" data-lang="uk" aria-pressed="true">🇺🇦 UA</button>
+          <button type="button" data-lang="cs" aria-pressed="false">🇨🇿 CZ</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="tabs-shell">
+      <nav class="tabs" role="tablist" aria-label="Розділи довідника">
+        <button class="tab" id="tab-overview" role="tab" aria-selected="true" aria-controls="panel" data-tab="overview"><span class="ico">✦</span><span data-tab-label="overview">Огляд</span></button>
+        <button class="tab" id="tab-active" role="tab" aria-selected="false" aria-controls="panel" data-tab="active"><span class="ico">🍃</span><span data-tab-label="active">Активні форми</span></button>
+        <button class="tab" id="tab-passive" role="tab" aria-selected="false" aria-controls="panel" data-tab="passive"><span class="ico">🔒</span><span data-tab-label="passive">Пасивні форми</span></button>
+        <button class="tab" id="tab-nuances" role="tab" aria-selected="false" aria-controls="panel" data-tab="nuances"><span class="ico">⚙</span><span data-tab-label="nuances">Інші форми й нюанси</span></button>
+        <button class="tab" id="tab-tips" role="tab" aria-selected="false" aria-controls="panel" data-tab="tips"><span class="ico">♧</span><span data-tab-label="tips">Короткі поради</span></button>
+      </nav>
+    </div>
+
+    <main id="panel" role="tabpanel" aria-labelledby="tab-overview" tabindex="0"></main>
+
+    <footer class="footer" id="sources"></footer>
+  </div>
+
+  <script>
+    const words = {
+      uk: {
+        title: 'Дієприкметники й віддієслівні прикметники',
+        subtitle: 'Порівняння форм, значень і способів творення в українській та чеській мовах',
+        tabs: { overview: 'Огляд', active: 'Активні форми', passive: 'Пасивні форми', nuances: 'Інші форми й нюанси', tips: 'Короткі поради' },
+        labels: { concept: 'Поняття', ua: 'Українська', cz: 'Чеська', role: 'Значення / функція', formation: 'Творення', examples: 'Приклади', type: 'Тип', pattern: 'Модель', verb: 'Дієслово', present: '3-тя особа множини, теперішній час', form: 'Прикметникова форма', uaEquivalent: 'Український відповідник', source: 'Джерела й примітки' },
+        sources: '<strong>Граматичні орієнтири:</strong><ul><li><a href="https://newpravopys.mova.info/pravopys.aspx?SectionID=3947" target="_blank" rel="noopener">Український правопис — дієприкметник</a>: поділ на активні форми теперішнього й минулого часу та пасивні форми минулого часу.</li><li><a href="https://publi.cz/download/publication/1418?online=1" target="_blank" rel="noopener">Český jazyk – morfologie</a>: чеські příčestí та adjektiva verbální, зокрема форми на -lý, -ný/-tý та -cí.</li><li><a href="https://www.ascestinaru.cz/poradna-asc-pricesti-nebo-pridavne-jmeno-ve-jmennem-tvaru/" target="_blank" rel="noopener">Asociace češtinářů — Příčestí, nebo přídavné jméno?</a>: пояснення співвідношення коротких і довгих форм.</li></ul><p class="small">Примітка: термінологія в українській і чеській граматиках не збігається повністю. Тому таблиця зіставляє передусім функцію та значення форм, а не припускає, що кожна форма має прямий морфологічний відповідник.</p>',
+        overviewIntro: '<strong>Як читати таблицю.</strong> В українській мові відповідні форми зазвичай описують як дієприкметники активного або пасивного стану. У чеській частина відповідників належить до дієслівних прикметників, частина — до прикметників, утворених від дієприкметників. Окремо показано звичайні прикметники, утворені від іменників.',
+        overviewTitle: 'Карта відповідників',
+        overviewLead: 'Форми згруповано за значенням і походженням. Закінчення є типовими моделями, а не механічними правилами для кожного дієслова.',
+        overviewRows: [
+          ['Активний дієприкметник минулого часу', '<span class="form">-лий, -ла, -ле, -лі</span><span class="sub">опалий, згаслий, зів’ялий</span>', '<span class="form">-lý, -lá, -lé</span><span class="sub">opadlý, zhaslý, zvadlý</span>', 'Називає предмет або істоту, що сама виконала дію чи зазнала зміни стану.', 'В українській — форми на -лий; у чеській прикметник утворюється від форми příčestí činné на -l додаванням прикметникових закінчень.', 'опале листя — opadlé listí; згасле світло — zhaslé světlo'],
+          ['Активний дієприкметник теперішнього часу', '<span class="form">-учий / -ючий, -ачий / -ячий</span><span class="sub">квітучий, лежачий</span>', '<span class="form">-cí</span><span class="sub">kvetoucí, ležící, pracující</span>', 'Позначає того, хто виконує дію, або предмет, для якого дія є характерною.', 'В українській форми обмеженіші у вживанні. У чеській -cí утворюється від теперішньої дієслівної основи; конкретна форма залежить від дієслова.', 'квітучий сад — kvetoucí zahrada; людина, яка працює — pracující člověk'],
+          ['Пасивний дієприкметник минулого часу', '<span class="form">-ний, -тий</span><span class="sub">зроблений, написаний, битий</span>', '<span class="form">-ný, -tý</span><span class="sub">udělaný, napsaný, rozbitý</span>', 'Позначає об’єкт, на який спрямовано дію або який є результатом дії.', 'В українській — пасивні форми на -ний/-тий. У чеській коротка форма příčestí trpné є частиною пасивної конструкції; довга форма на -ný/-tý функціонує як прикметник.', 'написаний лист — napsaný dopis; будинок був збудований — dům byl postaven'],
+          ['Звичайний прикметник від іменника', '<span class="form">навчальний</span><span class="sub">від навчання</span>', '<span class="form">studijní</span><span class="sub">від studium</span>', 'Виражає зв’язок із предметом, сферою або призначенням, а не виконавця дії.', 'Твориться від іменника за моделями кожної мови; це не дієприкметник.', 'навчальні матеріали — studijní materiály; навчальна програма — studijní program']
+        ],
+        overviewCards: [
+          ['blue','Ключова відмінність','<p><strong>Активний:</strong> лист <em>опав</em> → опалий лист.</p><p><strong>Пасивний:</strong> хтось <em>написав</em> лист → написаний лист.</p>'],
+          ['amber','Не все збігається буквально','<p>Чеське <strong>studijní</strong> — звичайний прикметник від іменника <em>studium</em>, а не форма від дієслова <em>studovat</em>.</p>'],
+          ['green','Форма залежить від контексту','<p><strong>zhaslé světlo</strong> — світло, що згасло; <strong>zhasnuté světlo</strong> — світло, яке вимкнули. Межа значень може перетинатися.</p>']
+        ],
+        activeIntro: '<strong>Активні форми</strong> пов’язують предмет із дією, яку він сам виконує, або зі зміною стану, якої він зазнав. Для зіставлення важливо розділяти минулий і теперішній час.',
+        activePastTitle: '1. Активні дієприкметники минулого часу',
+        activePastLead: 'Українська модель на -лий зіставляється з чеськими прикметниками на -lý, утвореними від форми příčestí činné.',
+        activePastRows: [
+          ['опалий лист','opadlý list','опасти → опалий','opadnout → opadl → opadlý','Лист сам опав.'],
+          ['згасле світло','zhaslé světlo','згаснути → згаслий / згасле','zhasnout → zhasl → zhaslý / zhaslé','Світло згасло; описуємо результат зміни стану.'],
+          ['зів’яла квітка','zvadlá květina','зів’янути → зів’ялий / зів’яла','zvadnout → zvadl → zvadlý / zvadlá','Квітка зів’яла.'],
+          ['пожовкле листя','zežloutlé listí','пожовкнути → пожовклий / пожовкле','zežloutnout → zežloutl → zežloutlý / zežloutlé','Листя змінило колір.'],
+          ['замерзла вода','zmrzlá voda','замерзнути → замерзлий / замерзла','zmrznout → zmrzl → zmrzlý / zmrzlá','Вода замерзла.']
+        ],
+        activePastNote: '<strong>Морфологічна логіка в чеській:</strong> береться чоловіча форма минулого дієприкметника на -l (zhasl, opadl, zmrzl), а далі додаються прикметникові закінчення: zhaslý — zhaslá — zhaslé. Це не означає, що від кожного дієслова можна вільно утворити прикметник на -lý: багато форм усталені або обмежені значенням.',
+        activePresentTitle: '2. Активні дієприкметники теперішнього часу',
+        activePresentLead: 'Українські форми на -учий/-ючий, -ачий/-ячий зіставляються з чеськими дієслівними прикметниками на -cí. Прямий переклад не завжди природний: часто потрібна конструкція «той, хто…».',
+        activePresentRows: [
+          ['квітучий сад','kvetoucí zahrada','квітнути → квітучий','kvést → kvetoucí','Обидві форми є природними прикметниковими характеристиками.'],
+          ['лежача людина','ležící člověk','лежати → лежачий','ležet → ležící','Описує того, хто перебуває в положенні лежачи.'],
+          ['працююча людина / людина, яка працює','pracující člověk','часто природніше: людина, яка працює','pracovat → pracující','Українське працюючий у значенні назви особи часто стилістично небажане; краще перебудувати вислів.'],
+          ['той, хто навчається','studující osoba','навчатися → той, хто навчається','studovat → studující','Чеське studující може бути означенням або субстантивованою формою.'],
+          ['дитина, що гойдається','houpající se dítě','дитина, що гойдається','houpat se → houpající se','Форма позначає того, хто виконує дію саме зараз або регулярно.']
+        ],
+        formationTitle: 'Як співвідносяться чеські форми на -cí з дієсловом?',
+        formationLead: 'Наведені пари показують типові чергування й основи. Це орієнтир для розпізнавання форми, а не правило «відкинути закінчення 3-ї особи множини й додати -cí».',
+        formationRows: [
+          ['nést','nesou','nesoucí','той, хто несе'],
+          ['prosit','prosí','prosící','той, хто просить'],
+          ['krýt','kryjí','kryjící','той, що покриває / накриває'],
+          ['dělat','dělají','dělající','той, хто робить'],
+          ['pracovat','pracují','pracující','той, хто працює'],
+          ['jít','jdou','jdoucí','той, хто йде'],
+          ['být','jsou','jsoucí (книжн.)','той, хто є (рідко вживається)'],
+          ['vědět','vědí','vědoucí (книжн.)','той, хто знає (книжний, рідкісний відповідник)']
+        ],
+        activePresentNote: 'В українській активні дієприкметники теперішнього часу формально мають моделі -учий/-ючий, -ачий/-ячий, але їхня продуктивність і стилістична нейтральність обмежені. Для назви людини, яка виконує дію, часто краще вживати підрядну конструкцію: «людина, яка працює», а не «працююча людина». У чеській форми на -cí поширеніші, але й там не кожне дієслово природно утворює таке означення. Деякі формально можливі форми книжні або рідкісні, наприклад jsoucí (від být) і vědoucí (від vědět).',
+        passiveIntro: '<strong>Пасивні форми</strong> позначають предмет, на який спрямовано дію. Тут особливо важливо відрізняти чеську коротку форму дієприкметника в пасивному присудку від довгої прикметникової форми.',
+        passiveTitle: 'Пасивні форми минулого часу',
+        passiveLead: 'Українські пасивні дієприкметники минулого часу мають моделі -ний/-тий. У чеській довгі прикметникові форми мають закінчення -ný/-tý; короткі форми příčestí trpné використовуються в пасивних конструкціях.',
+        passiveRows: [
+          ['написаний лист','napsaný dopis','написати → написаний','napsat → napsán → napsaný','Лист, який написали.'],
+          ['випрана білизна','vyprané prádlo','випрати → випраний / випрана','vyprat → vyprán → vypraný / vypraná','Білизна, яку випрали.'],
+          ['зроблене завдання','udělaný úkol','зробити → зроблений / зроблене','udělat → udělán → udělaný / udělané','Завдання, яке виконали.'],
+          ['відчинені двері','otevřené dveře','відчинити → відчинений / відчинені','otevřít → otevřen → otevřený / otevřené','Двері, які відчинили.'],
+          ['розбите вікно','rozbité okno','розбити → розбитий / розбите','rozbít → rozbit → rozbitý / rozbité','Вікно, яке розбили.'],
+          ['збудований будинок','postavený dům','збудувати → збудований','postavit → postaven → postavený','Будинок, який збудували.']
+        ],
+        passiveDistTitle: 'Коротка форма й довга прикметникова форма в чеській',
+        passiveDist: '<div class="pair-grid"><div class="pair"><h3>Пасивний присудок: коротка форма</h3><p class="form">Dům byl postaven architektem Petrem Macinkou.</p><p>Будинок був збудований архітектором Петром Мацінкою.</p><p class="small">postaven — коротка форма příčestí trpného в конструкції пасивного стану.</p></div><div class="pair"><h3>Означення: довга форма</h3><p class="form">Postavený dům stojí na náměstí.</p><p>Збудований будинок стоїть на площі.</p><p class="small">postavený — прикметникова форма, узгоджується з іменником: postavený dům, postavená budova, postavené město.</p></div></div>',
+        passiveNote: 'Порівняйте: «Dům byl postaven» (коротка форма у пасивному присудку) і «postavený dům» (довга прикметникова форма). В українській обидва контексти можуть містити форму «збудований», але синтаксична роль різна.',
+        nuancesIntro: 'Не кожен прикметник, пов’язаний зі значенням дії, є дієприкметником. Важливо відрізняти дієслівні прикметники від звичайних прикметників, утворених від іменників, а також враховувати лексикалізацію й контекст.',
+        nuancesTitle: 'Пари, які легко сплутати',
+        nuanceCards: [
+          ['studijní × studující','<p><span class="form">studijní materiály</span> — <strong>навчальні матеріали</strong>.</p><p><span class="form">studující osoba</span> — <strong>людина, яка навчається</strong>.</p><p><strong>studijní</strong> — звичайний прикметник від іменника <em>studium</em>; <strong>studující</strong> — дієслівний прикметник від <em>studovat</em>.</p>'],
+          ['zhaslé × zhasnuté','<p><span class="form">zhaslé světlo</span> — <strong>згасле світло</strong>: світло згасло.</p><p><span class="form">zhasnuté světlo</span> — <strong>вимкнене світло</strong>: світло вимкнули.</p><p>Розрізнення корисне, але в реальному вжитку значення можуть частково перетинатися.</p>'],
+          ['opadlé / opadané × osypané','<p><span class="form">opadlé listí / opadané listí</span> — <strong>опале листя</strong>.</p><p><span class="form">osypané</span> зазвичай означає «посипане / вкрите чимось» або «обсипане» в іншому контексті; це не звичайний відповідник до «опале листя».</p>'],
+          ['houpací × houpající se','<p><span class="form">houpací křeslo</span> — <strong>крісло-гойдалка</strong>: призначене для гойдання.</p><p><span class="form">houpající se dítě</span> — <strong>дитина, що гойдається</strong>: виконує дію.</p><p><strong>houpací</strong> — прикметник призначення; <strong>houpající se</strong> — дієслівний прикметник.</p>']
+        ],
+        lPartTitle: 'Не плутати дієслівну форму минулого часу з прикметником',
+        lPartRows: [
+          ['Світло згасло.','Světlo zhaslo.','zhaslo — форма минулого часу дієслова.'],
+          ['Згасле світло.','Zhaslé světlo.','zhaslé — прикметникова форма від zhasl.'],
+          ['Він працював.','Pracoval.','pracoval — форма минулого часу дієслова.'],
+          ['Людина, яка працює.','Pracující člověk.','pracující — дієслівний прикметник на -cí.'],
+          ['Виконане завдання.','Udělaný úkol.','udělaný — пасивний дієслівний прикметник.']
+        ],
+        tipsIntro: 'Кілька запитань допоможуть правильно визначити тип форми та вибрати природний відповідник.',
+        tips: [
+          ['1. Чи предмет сам виконав дію або змінився?','Шукайте активне значення: опале листя — листя, яке опало; zhaslé světlo — світло, яке згасло.'],
+          ['2. Чи дію виконали над предметом?','Шукайте пасивне значення: написаний лист — лист, який написали; napsaný dopis.'],
+          ['3. Чи йдеться про того, хто виконує дію?','У чеській часто можливе означення на -cí: pracující člověk, studující osoba. В українській нерідко природніше «людина, яка працює / навчається».'],
+          ['4. Чи прикметник просто вказує на зв’язок із чимось?','Це може бути звичайний прикметник від іменника: studijní program — навчальна програма.'],
+          ['5. Чи можна механічно перенести закінчення?','Ні. Зіставляйте значення, походження та звичність форми в кожній мові окремо.']
+        ],
+        tipsBottom: '<strong>Головна порада:</strong> спершу визначте, що саме означає форма — виконавця дії, результат самостійної зміни, об’єкт дії чи просто зв’язок із певною сферою. Лише після цього добирайте відповідник іншою мовою.'
+      },
+      cs: {
+        title: 'Česká a ukrajinská slovesná přídavná jména',
+        subtitle: 'Srovnání tvarů, významů a způsobů tvoření v češtině a ukrajinštině',
+        tabs: { overview: 'Přehled', active: 'Činné formy', passive: 'Trpné formy', nuances: 'Další tvary a rozdíly', tips: 'Stručné rady' },
+        labels: { concept: 'Pojem', ua: 'Ukrajinština', cz: 'Čeština', role: 'Význam / funkce', formation: 'Tvoření', examples: 'Příklady', type: 'Typ', pattern: 'Model', verb: 'Sloveso', present: '3. osoba množného čísla, přítomný čas', form: 'Adjektivní tvar', uaEquivalent: 'Ukrajinský ekvivalent', source: 'Zdroje a poznámky' },
+        sources: '<strong>Gramatické zdroje:</strong><ul><li><a href="https://newpravopys.mova.info/pravopys.aspx?SectionID=3947" target="_blank" rel="noopener">Ukrajinský pravopis — дієприкметник</a>: rozdělení na činná příčestí přítomného a minulého času a trpná příčestí minulého času.</li><li><a href="https://publi.cz/download/publication/1418?online=1" target="_blank" rel="noopener">Český jazyk – morfologie</a>: česká příčestí a verbální adjektiva, včetně tvarů na -lý, -ný/-tý a -cí.</li><li><a href="https://www.ascestinaru.cz/poradna-asc-pricesti-nebo-pridavne-jmeno-ve-jmennem-tvaru/" target="_blank" rel="noopener">Asociace češtinářů — Příčestí, nebo přídavné jméno?</a>: vztah krátkých a dlouhých tvarů.</li></ul><p class="small">Poznámka: česká a ukrajinská gramatická terminologie se zcela nekryjí. Přehled proto porovnává především funkci a význam tvarů, nikoli mechanickou morfologickou shodu.</p>',
+        overviewIntro: '<strong>Jak tabulku číst.</strong> V ukrajinštině se odpovídající tvary obvykle popisují jako činná nebo trpná příčestí. V češtině patří některé protějšky mezi verbální adjektiva, jiné jsou adjektiva utvořená z příčestí. Samostatně jsou uvedena běžná adjektiva odvozená od podstatných jmen.',
+        overviewTitle: 'Přehled odpovídajících tvarů',
+        overviewLead: 'Tvary jsou seskupeny podle významu a původu. Uvedené koncovky jsou typické modely, nikoli mechanická pravidla pro každé sloveso.',
+        overviewRows: [
+          ['Činné příčestí minulého času', '<span class="form">-лий, -ла, -ле, -лі</span><span class="sub">опалий, згаслий, зів’ялий</span>', '<span class="form">-lý, -lá, -lé</span><span class="sub">opadlý, zhaslý, zvadlý</span>', 'Označuje předmět nebo osobu, která sama vykonala děj nebo prošla změnou stavu.', 'V ukrajinštině tvary na -лий; v češtině adjektivum od tvaru příčestí činného na -l s adjektivními koncovkami.', 'опале листя — opadlé listí; згасле світло — zhaslé světlo'],
+          ['Činné slovesné adjektivum na -cí', '<span class="form">-учий / -ючий, -ачий / -ячий</span><span class="sub">квітучий, лежачий</span>', '<span class="form">-cí</span><span class="sub">kvetoucí, ležící, pracující</span>', 'Označuje toho, kdo vykonává děj, nebo něco, pro co je děj charakteristický.', 'Ukrajinské tvary jsou omezenější v užívání. České -cí se tvoří od přítomného slovesného základu; konkrétní podoba závisí na slovese.', 'квітучий сад — kvetoucí zahrada; людина, яка працює — pracující člověk'],
+          ['Trpné příčestí minulého času', '<span class="form">-ний, -тий</span><span class="sub">зроблений, написаний, битий</span>', '<span class="form">-ný, -tý</span><span class="sub">udělaný, napsaný, rozbitý</span>', 'Označuje předmět, na který děj působí nebo který je výsledkem děje.', 'V ukrajinštině trpné tvary na -ний/-тий. V češtině je krátký tvar příčestí trpného součástí pasivní konstrukce; dlouhý tvar na -ný/-tý funguje jako adjektivum.', 'написаний лист — napsaný dopis; будинок був збудований — dům byl postaven'],
+          ['Běžné adjektivum od podstatného jména', '<span class="form">навчальний</span><span class="sub">od навчання</span>', '<span class="form">studijní</span><span class="sub">od studium</span>', 'Vyjadřuje vztah k předmětu, oblasti nebo účelu, nikoli původce děje.', 'Tvoří se od podstatného jména podle slovotvorných pravidel daného jazyka; nejde o příčestí.', 'навчальні матеріали — studijní materiály; навчальна програма — studijní program']
+        ],
+        overviewCards: [
+          ['blue','Základní rozdíl','<p><strong>Činné:</strong> list <em>opadl</em> → opadlý list.</p><p><strong>Trpné:</strong> někdo <em>napsal</em> dopis → napsaný dopis.</p>'],
+          ['amber','Ne vždy existuje doslovný protějšek','<p>České <strong>studijní</strong> je běžné adjektivum od podstatného jména <em>studium</em>, nikoli tvar od slovesa <em>studovat</em>.</p>'],
+          ['green','Rozhoduje kontext','<p><strong>zhaslé světlo</strong> — světlo, které zhaslo; <strong>zhasnuté světlo</strong> — světlo, které někdo zhasl. Významy se mohou částečně překrývat.</p>']
+        ],
+        activeIntro: '<strong>Činné tvary</strong> spojují předmět s dějem, který sám vykonává, nebo se změnou stavu, kterou sám prošel. Při srovnání je třeba rozlišovat minulý a přítomný čas.',
+        activePastTitle: '1. Činná příčestí minulého času',
+        activePastLead: 'Ukrajinskému modelu na -лий odpovídají česká adjektiva na -lý, která se tvoří od tvaru příčestí činného.',
+        activePastRows: [
+          ['опалий лист','opadlý list','опасти → опалий','opadnout → opadl → opadlý','List sám opadl.'],
+          ['згасле світло','zhaslé světlo','згаснути → згаслий / згасле','zhasnout → zhasl → zhaslý / zhaslé','Světlo zhaslo; popisujeme výsledek změny stavu.'],
+          ['зів’яла квітка','zvadlá květina','зів’янути → зів’ялий / зів’яла','zvadnout → zvadl → zvadlý / zvadlá','Květina zvadla.'],
+          ['пожовкле листя','zežloutlé listí','пожовкнути → пожовклий / пожовкле','zežloutnout → zežloutl → zežloutlý / zežloutlé','Listí změnilo barvu.'],
+          ['замерзла вода','zmrzlá voda','замерзнути → замерзлий / замерзла','zmrznout → zmrzl → zmrzlý / zmrzlá','Voda zmrzla.']
+        ],
+        activePastNote: '<strong>Morfologická logika v češtině:</strong> vychází se z mužského tvaru minulého příčestí na -l (zhasl, opadl, zmrzl) a přidají se adjektivní koncovky: zhaslý — zhaslá — zhaslé. Neznamená to, že lze od každého slovesa volně vytvořit adjektivum na -lý; mnohé tvary jsou ustálené nebo významově omezené.',
+        activePresentTitle: '2. Činná slovesná adjektiva na -cí',
+        activePresentLead: 'Ukrajinská činná příčestí přítomného času na -учий/-ючий, -ачий/-ячий se srovnávají s českými slovesnými adjektivy na -cí. Doslovný překlad nebývá vždy přirozený; často je vhodná vedlejší věta „ten, kdo…“.',
+        activePresentRows: [
+          ['квітучий сад','kvetoucí zahrada','квітнути → квітучий','kvést → kvetoucí','Oba tvary jsou přirozenými adjektivními charakteristikami.'],
+          ['лежача людина','ležící člověk','лежати → лежачий','ležet → ležící','Označuje člověka, který leží.'],
+          ['працююча людина / людина, яка працює','pracující člověk','často přirozeněji: людина, яка працює','pracovat → pracující','Ukrajinské працюючий ve významu označení osoby bývá stylisticky nevhodné; často je lepší opis.'],
+          ['той, хто навчається','studující osoba','навчатися → той, хто навчається','studovat → studující','České studující může být přívlastkem i substantivizovaným tvarem.'],
+          ['дитина, що гойдається','houpající se dítě','дитина, що гойдається','houpat se → houpající se','Tvar označuje toho, kdo děj právě vykonává nebo jej vykonává obvykle.']
+        ],
+        formationTitle: 'Jak souvisejí české tvary na -cí se slovesem?',
+        formationLead: 'Příklady ukazují typické kmeny a obměny. Jde o vodítko k rozpoznání tvaru, nikoli o mechanické pravidlo „odstranit koncovku 3. osoby množného čísla a přidat -cí“.',
+        formationRows: [
+          ['nést','nesou','nesoucí','той, хто несе'],
+          ['prosit','prosí','prosící','той, хто просить'],
+          ['krýt','kryjí','kryjící','той, що покриває / накриває'],
+          ['dělat','dělají','dělající','той, хто робить'],
+          ['pracovat','pracují','pracující','той, хто працює'],
+          ['jít','jdou','jdoucí','той, хто йде'],
+          ['být','jsou','jsoucí (knižní)','той, хто є (рідко вживається)'],
+          ['vědět','vědí','vědoucí (knižní)','той, хто знає (книжний, рідкісний відповідник)']
+        ],
+        activePresentNote: 'V ukrajinštině mají činná příčestí přítomného času formální modely -учий/-ючий, -ачий/-ячий, ale jejich produktivita a stylistická neutrálnost jsou omezené. Pro označení osoby, která vykonává děj, je často přirozenější vedlejší věta: „людина, яка працює“ místo „працююча людина“. V češtině jsou tvary na -cí rozšířenější, ani zde však není přirozené tvořit takové adjektivum od každého slovesa. Některé formálně možné tvary jsou knižní nebo vzácné, například jsoucí (od být) a vědoucí (od vědět).',
+        passiveIntro: '<strong>Trpné tvary</strong> označují předmět, na který je děj zaměřen. Zvlášť důležité je rozlišovat krátký český tvar příčestí v pasivním přísudku od dlouhého adjektivního tvaru.',
+        passiveTitle: 'Trpná příčestí minulého času',
+        passiveLead: 'Ukrajinská trpná příčestí minulého času mají modely -ний/-тий. V češtině mají dlouhá adjektivní forma zakončení -ný/-tý; krátké tvary příčestí trpného se používají v pasivních konstrukcích.',
+        passiveRows: [
+          ['написаний лист','napsaný dopis','написати → написаний','napsat → napsán → napsaný','Dopis, který někdo napsal.'],
+          ['випрана білизна','vyprané prádlo','випрати → випраний / випрана','vyprat → vyprán → vypraný / vypraná','Prádlo, které někdo vypral.'],
+          ['зроблене завдання','udělaný úkol','зробити → зроблений / зроблене','udělat → udělán → udělaný / udělané','Úkol, který někdo udělal.'],
+          ['відчинені двері','otevřené dveře','відчинити → відчинений / відчинені','otevřít → otevřen → otevřený / otevřené','Dveře, které někdo otevřel.'],
+          ['розбите вікно','rozbité okno','розбити → розбитий / розбите','rozbít → rozbit → rozbitý / rozbité','Okno, které někdo rozbil.'],
+          ['збудований будинок','postavený dům','збудувати → збудований','postavit → postaven → postavený','Dům, který někdo postavil.']
+        ],
+        passiveDistTitle: 'Krátký a dlouhý tvar v češtině',
+        passiveDist: '<div class="pair-grid"><div class="pair"><h3>Pasivní přísudek: krátký tvar</h3><p class="form">Dům byl postaven architektem Petrem Macinkou.</p><p>Будинок був збудований архітектором Петром Мацінкою.</p><p class="small">postaven — krátký tvar příčestí trpného v konstrukci opisného pasiva.</p></div><div class="pair"><h3>Přívlastek: dlouhý tvar</h3><p class="form">Postavený dům stojí na náměstí.</p><p>Збудований будинок стоїть на площі.</p><p class="small">postavený — adjektivní tvar, shoduje se s podstatným jménem: postavený dům, postavená budova, postavené město.</p></div></div>',
+        passiveNote: 'Srovnejte: „Dům byl postaven“ (krátký tvar v pasivním přísudku) a „postavený dům“ (dlouhý adjektivní tvar). V ukrajinštině se v obou kontextech může objevit forma „збудований“, ale její syntaktická funkce je odlišná.',
+        nuancesIntro: 'Ne každé adjektivum související s dějem je příčestí. Je třeba rozlišovat slovesná adjektiva od běžných adjektiv odvozených od podstatných jmen a zohlednit také ustálené významy a kontext.',
+        nuancesTitle: 'Tvary, které se snadno zaměňují',
+        nuanceCards: [
+          ['studijní × studující','<p><span class="form">studijní materiály</span> — <strong>навчальні матеріали</strong>.</p><p><span class="form">studující osoba</span> — <strong>людина, яка навчається</strong>.</p><p><strong>studijní</strong> — běžné adjektivum od podstatného jména <em>studium</em>; <strong>studující</strong> — slovesné adjektivum od slovesa <em>studovat</em>.</p>'],
+          ['zhaslé × zhasnuté','<p><span class="form">zhaslé světlo</span> — <strong>згасле світло</strong>: světlo zhaslo.</p><p><span class="form">zhasnuté světlo</span> — <strong>вимкнене світло</strong>: někdo světlo zhasl.</p><p>Rozlišení je užitečné, ale v běžném užívání se významy mohou částečně překrývat.</p>'],
+          ['opadlé / opadané × osypané','<p><span class="form">opadlé listí / opadané listí</span> — <strong>опале листя</strong>.</p><p><span class="form">osypané</span> obvykle znamená „posypané / pokryté něčím“ nebo „obsypané“ v jiném kontextu; není to běžný ekvivalent pro „опале листя“.</p>'],
+          ['houpací × houpající se','<p><span class="form">houpací křeslo</span> — <strong>крісло-гойдалка</strong>: je určeno ke houpání.</p><p><span class="form">houpající se dítě</span> — <strong>дитина, що гойдається</strong>: vykonává děj.</p><p><strong>houpací</strong> — adjektivum vyjadřující účel; <strong>houpající se</strong> — slovesné adjektivum.</p>']
+        ],
+        lPartTitle: 'Nezaměňujte slovesný tvar minulého času s adjektivem',
+        lPartRows: [
+          ['Світло згасло.','Světlo zhaslo.','zhaslo — slovesný tvar minulého času.'],
+          ['Згасле світло.','Zhaslé světlo.','zhaslé — adjektivní tvar od zhasl.'],
+          ['Він працював.','Pracoval.','pracoval — slovesný tvar minulého času.'],
+          ['Людина, яка працює.','Pracující člověk.','pracující — slovesné adjektivum na -cí.'],
+          ['Виконане завдання.','Udělaný úkol.','udělaný — trpné slovesné adjektivum.']
+        ],
+        tipsIntro: 'Několik otázek pomůže určit typ tvaru a zvolit přirozený ekvivalent.',
+        tips: [
+          ['1. Vykonal předmět děj sám nebo se sám změnil?','Hledejte činný význam: опале листя — listí, které opadlo; zhaslé světlo — světlo, které zhaslo.'],
+          ['2. Působil někdo dějem na daný předmět?','Hledejte trpný význam: написаний лист — dopis, který někdo napsal; napsaný dopis.'],
+          ['3. Označuje tvar toho, kdo vykonává děj?','V češtině je často možné adjektivum na -cí: pracující člověk, studující osoba. V ukrajinštině bývá přirozenější opis „людина, яка працює / навчається“.'],
+          ['4. Vyjadřuje adjektivum pouze vztah k určité oblasti?','Může jít o běžné adjektivum od podstatného jména: studijní program — навчальна програма.'],
+          ['5. Lze koncovku přenést mechanicky?','Ne. Vždy porovnávejte význam, původ a běžnost daného tvaru v každém jazyce zvlášť.']
+        ],
+        tipsBottom: '<strong>Hlavní doporučení:</strong> nejprve určete, zda tvar označuje původce děje, výsledek samostatné změny, objekt děje, nebo pouze vztah k určité oblasti. Teprve potom hledejte ekvivalent v druhém jazyce.'
+      }
+    };
+
+    let currentLang = 'uk';
+    let currentTab = 'overview';
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const esc = (s) => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+
+    function table(headers, rows) {
+      return `<div class="table-wrap"><table><thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    }
+    function cardGrid(cards) {
+      return `<div class="cards">${cards.map(([tone,title,body]) => `<section class="card ${tone}"><h3>${title}</h3>${body}</section>`).join('')}</div>`;
+    }
+    function pairedTable(rows, labels) {
+      return table([labels.ua, labels.cz, labels.formation, labels.examples], rows.map(r => [
+        `<span class="form">${r[0]}</span>`, `<span class="form">${r[1]}</span>`, r[2] + '<br><span class="sub">' + r[3] + '</span>', r[4]
+      ]));
+    }
+    function renderOverview(d) {
+      return `<div class="intro">${d.overviewIntro}</div>
+        <h2 class="section-title">${d.overviewTitle}</h2><p class="section-lead">${d.overviewLead}</p>
+        ${table([d.labels.concept,d.labels.ua,d.labels.cz,d.labels.role,d.labels.formation,d.labels.examples], d.overviewRows.map(r => [r[0],r[1],r[2],r[3],r[4],r[5]]))}
+        ${cardGrid(d.overviewCards)}`;
+    }
+    function renderActive(d) {
+      const formRows = d.formationRows.map(r => [r[0],r[1],`<span class="form">${r[2]}</span>`,r[3]]);
+      return `<div class="intro">${d.activeIntro}</div>
+        <h2 class="section-title">${d.activePastTitle}</h2><p class="section-lead">${d.activePastLead}</p>
+        ${pairedTable(d.activePastRows, d.labels)}
+        <div class="note">${d.activePastNote}</div>
+        <h2 class="section-title">${d.activePresentTitle}</h2><p class="section-lead">${d.activePresentLead}</p>
+        ${pairedTable(d.activePresentRows, d.labels)}
+        <h2 class="section-title">${d.formationTitle}</h2><p class="section-lead">${d.formationLead}</p>
+        ${table([d.labels.verb,d.labels.present,d.labels.form,d.labels.uaEquivalent], formRows)}
+        <div class="note">${d.activePresentNote}</div>`;
+    }
+    function renderPassive(d) {
+      return `<div class="intro">${d.passiveIntro}</div>
+        <h2 class="section-title">${d.passiveTitle}</h2><p class="section-lead">${d.passiveLead}</p>
+        ${pairedTable(d.passiveRows, d.labels)}
+        <h2 class="section-title">${d.passiveDistTitle}</h2>
+        ${d.passiveDist}
+        <div class="note">${d.passiveNote}</div>`;
+    }
+    function renderNuances(d) {
+      const cards = d.nuanceCards.map((item,i) => `<section class="pair"><h3>${item[0]}</h3>${item[1]}</section>`).join('');
+      return `<div class="intro">${d.nuancesIntro}</div><h2 class="section-title">${d.nuancesTitle}</h2>
+        <div class="pair-grid">${cards}</div>
+        <h2 class="section-title">${d.lPartTitle}</h2>
+        ${table([d.labels.ua,d.labels.cz,d.labels.role],d.lPartRows)}
+        <div class="note">Порівняння показує, чому форма дієслова минулого часу й прикметникова форма не є взаємозамінними.</div>`;
+    }
+    function renderTips(d) {
+      return `<div class="intro">${d.tipsIntro}</div>
+        <div class="cards">${d.tips.map((tip,i) => `<section class="card ${i%2===0?'blue':'green'}"><h3>${tip[0]}</h3><p>${tip[1]}</p></section>`).join('')}</div>
+        <div class="note">${d.tipsBottom}</div>`;
+    }
+    function render() {
+      const d = words[currentLang];
+      document.documentElement.lang = currentLang;
+      document.title = d.title;
+      document.querySelector('.lang-switch').setAttribute('aria-label', currentLang === 'uk' ? 'Мова інтерфейсу' : 'Jazyk rozhraní');
+      $('#pageTitle').textContent = d.title;
+      $('#pageSubtitle').textContent = d.subtitle;
+      Object.keys(d.tabs).forEach(key => { $(`[data-tab-label="${key}"]`).textContent = d.tabs[key]; });
+      document.querySelectorAll('[data-lang]').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.lang === currentLang)));
+      document.querySelectorAll('[data-tab]').forEach(btn => {
+        const selected = btn.dataset.tab === currentTab;
+        btn.setAttribute('aria-selected', String(selected));
+        btn.tabIndex = selected ? 0 : -1;
+      });
+      const renderers = { overview: renderOverview, active: renderActive, passive: renderPassive, nuances: renderNuances, tips: renderTips };
+      $('#panel').innerHTML = renderers[currentTab](d);
+      $('#panel').setAttribute('aria-labelledby', `tab-${currentTab}`);
+      $('#sources').innerHTML = `<strong>${d.labels.source}</strong>${d.sources.replace(/^<strong>.*?<\/strong>/,'')}`;
+    }
+    document.querySelectorAll('[data-lang]').forEach(btn => btn.addEventListener('click', () => { currentLang = btn.dataset.lang; render(); }));
+    document.querySelectorAll('[data-tab]').forEach(btn => btn.addEventListener('click', () => { currentTab = btn.dataset.tab; render(); }));
+    document.querySelector('.tabs').addEventListener('keydown', e => {
+      if (!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
+      const tabs = [...document.querySelectorAll('[data-tab]')];
+      let idx = tabs.findIndex(t => t.dataset.tab === currentTab);
+      if (e.key === 'ArrowRight') idx = (idx + 1) % tabs.length;
+      if (e.key === 'ArrowLeft') idx = (idx - 1 + tabs.length) % tabs.length;
+      if (e.key === 'Home') idx = 0;
+      if (e.key === 'End') idx = tabs.length - 1;
+      currentTab = tabs[idx].dataset.tab; render(); tabs[idx].focus();
+    });
+    function notifyParentHeight() {
+      if (window.parent === window) return;
+      const height = Math.ceil(document.documentElement.scrollHeight);
+      window.parent.postMessage({ type: 'ua-cz-verbalni-pridavky:height', height }, '*');
+    }
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(() => requestAnimationFrame(notifyParentHeight)).observe(document.body);
+    }
+    window.addEventListener('load', notifyParentHeight);
+    window.addEventListener('resize', notifyParentHeight);
+    render();
+    requestAnimationFrame(notifyParentHeight);
+  </script>
+</body>
+</html>
